@@ -1,2 +1,21 @@
 syntax = "proto3";
 
+package KDIPgRPC_proto;
+
+service RealTimeModelServing{
+  rpc ConnectCheck (Message) returns (Message);
+
+  rpc GetVisionImage (Message) returns (ImageDataPacket);
+}
+
+message Message {
+	string UserID = 1;
+	string UserMessage =2;
+}
+
+
+message ImageDataPacket {
+	string Name = 1;
+	int32 LayerNum = 2;
+	bytes Datas = 3;
+}
