@@ -1,16 +1,16 @@
 syntax = "proto3";
 
 import "google/protobuf/empty.proto";
+package KDIPgRPC_proto;
 
 service KDIP_NetService{
-
   // ★ (Unary) Client Signal Channel
   // Server <-- Client
   rpc ClientSignalService (Message) returns (Message);
 
   // ★ (Server Streaming) Monitoring Channel
   // Server  --> Client
-  rpc VisionDataService(google.protobuf.Empty) returns (ImageDataPacket);
+  rpc VisionDataService(Message) returns (ImageDataPacket);
 
 }
 
