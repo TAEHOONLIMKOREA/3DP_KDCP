@@ -1,20 +1,27 @@
 syntax = "proto3";
 
-package KDIPgRPC_proto;
+import "google/protobuf/empty.proto";
 
-service RealTimeModelServing{
-  rpc ConnectCheck (Message) returns (Message);
+service KDIP_NetService{
 
-  rpc GetVisionImage (Message) returns (ImageDataPacket);
+  // ★ (Unary) Client Signal Channel
+  // Server <-- Client
+  rpc ClientSignalService (Message) returns (Message);
+
+  // ★ (Server Streaming) Monitoring Channel
+  // Server  --> Client
+  rpc VisionDataService(google.protobuf.Empty) returns (ImageDataPacket);
+
 }
 
-message Message {
+message Message
+{
 	string UserID = 1;
 	string UserMessage =2;
 }
 
-
-message ImageDataPacket {
+message ImageDataPacket
+{
 	string Name = 1;
 	int32 LayerNum = 2;
 	bytes Datas = 3;

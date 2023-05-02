@@ -6,6 +6,9 @@ __pycache__/
 # C extensions
 *.so
 
+KDMPgRPC_pb2.py
+KDMPgRPC_pb2_grpc.py
+
 # Distribution / packaging
 .Python
 build/
