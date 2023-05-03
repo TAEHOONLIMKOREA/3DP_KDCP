@@ -45,6 +45,8 @@ class KDMPgRPC_NetServiceServicer(KDMPgRPC_pb2_grpc.KDIP_NetServiceServicer):
         if (not os.path.isdir(directory)):
             return None
 
+        img_file = request.UserMessage
+
         img = cv2.imread(directory + "/" + img_file)
         #  불러온 이미지 바이트 변환
         img_byte_cv = cv2.imencode('.PNG', img)[1].tobytes()
@@ -53,9 +55,8 @@ class KDMPgRPC_NetServiceServicer(KDMPgRPC_pb2_grpc.KDIP_NetServiceServicer):
         response_packet = KDMPgRPC_pb2.ImageDataPacket(Name=img_file,
                                                        LayerNum=0,
                                                        Datas=img_byte_cv)
-        if "FirstShot" in img_file:
-            time.sleep(2)
+
 
         print("Image file transfer completed")
         # 패킷 전송
-        yield response_packet
+        return response_packet
