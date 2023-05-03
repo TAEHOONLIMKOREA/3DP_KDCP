@@ -1,9 +1,7 @@
 import os
-import time
-import io
+import sqlite3
 import grpc
 import cv2
-import numpy as np
 import KDMPgRPC_pb2
 import KDMPgRPC_pb2_grpc
 from concurrent import futures
@@ -41,13 +39,20 @@ class KDMPgRPC_NetServiceServicer(KDMPgRPC_pb2_grpc.KDIP_NetServiceServicer):
         return resultMessage
 
     def VisionDataService(self, request, context):
-        directory = "Test_Image_File"
-        if (not os.path.isdir(directory)):
+        con = sqlite3.connect('K3DGConfiguration.db')
+        cur = con.cursor()
+
+        cur.execute("SELECT * FROM ConfigTable")
+        rows = cur.fetchall()
+        vision_data_dirpath = rows[0][5]
+        print(vision_data_dirpath)
+
+        if (not os.path.isdir(vision_data_dirpath)):
             return None
 
         img_file = request.UserMessage
 
-        img = cv2.imread(directory + "/" + img_file)
+        img = cv2.imread(vision_data_dirpath + "/" + img_file)
         #  불러온 이미지 바이트 변환
         img_byte_cv = cv2.imencode('.PNG', img)[1].tobytes()
 
