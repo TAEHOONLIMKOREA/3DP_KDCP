@@ -2,14 +2,14 @@ import os
 import sqlite3
 import grpc
 import cv2
-import KDMPgRPC_pb2
-import KDMPgRPC_pb2_grpc
+import KDCPgRPC_pb2
+import KDCPgRPC_pb2_grpc
 from concurrent import futures
 
 
 def StartServer() -> None:
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=5))
-    KDMPgRPC_pb2_grpc.add_KDIP_NetServiceServicer_to_server(KDMPgRPC_NetServiceServicer(), server)
+    KDCPgRPC_pb2_grpc.add_KDIP_NetServiceServicer_to_server(KDCPgRPC_NetServiceServicer(), server)
     print("server started!")
     server.add_insecure_port('[::]:50052')
     server.start()
@@ -20,7 +20,7 @@ def StartServer() -> None:
             server.stop(0)
             return
 
-class KDMPgRPC_NetServiceServicer(KDMPgRPC_pb2_grpc.KDIP_NetServiceServicer):
+class KDCPgRPC_NetServiceServicer(KDCPgRPC_pb2_grpc.KDIP_NetServiceServicer):
 
     def ClientSignalService(self, request, context):
         # 현재는 채팅 메시지 전송으로 구현
@@ -28,7 +28,7 @@ class KDMPgRPC_NetServiceServicer(KDMPgRPC_pb2_grpc.KDIP_NetServiceServicer):
         # 현재 상태에서는 기본적으로 Echo메세지 역할을 하고
         # 특정 단어(signal)를 수신받았을 시 동작을 수행한다.
         # response 구조체 생성
-        resultMessage = KDMPgRPC_pb2.Message()
+        resultMessage = KDCPgRPC_pb2.Message()
         resultMessage.UserID = "Server"
         resultMessage.UserMessage = message
         print(message)
@@ -51,13 +51,16 @@ class KDMPgRPC_NetServiceServicer(KDMPgRPC_pb2_grpc.KDIP_NetServiceServicer):
             return None
 
         img_file = request.UserMessage
+        # img = cv2.imread(vision_data_dirpath + "/" + img_file)
 
-        img = cv2.imread(vision_data_dirpath + "/" + img_file)
+        img = cv2.imread("/Test_Image_File/" + img_file)
+
+
         #  불러온 이미지 바이트 변환
         img_byte_cv = cv2.imencode('.PNG', img)[1].tobytes()
 
         # 반환 패킷 생성
-        response_packet = KDMPgRPC_pb2.ImageDataPacket(Name=img_file,
+        response_packet = KDCPgRPC_pb2.ImageDataPacket(Name=img_file,
                                                        LayerNum=0,
                                                        Datas=img_byte_cv)
 
