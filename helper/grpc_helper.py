@@ -39,21 +39,21 @@ class KDCPgRPC_NetServiceServicer(KDCPgRPC_pb2_grpc.KDIP_NetServiceServicer):
         return resultMessage
 
     def VisionDataService(self, request, context):
-        con = sqlite3.connect('K3DGConfiguration.db')
-        cur = con.cursor()
+        # con = sqlite3.connect('K3DGConfiguration.db')
+        # cur = con.cursor()
+        #
+        # cur.execute("SELECT * FROM ConfigTable")
+        # rows = cur.fetchall()
+        # vision_data_dirpath = rows[0][5]
+        # print(vision_data_dirpath)
+        #
+        # if (not os.path.isdir(vision_data_dirpath)):
+        #     return None
 
-        cur.execute("SELECT * FROM ConfigTable")
-        rows = cur.fetchall()
-        vision_data_dirpath = rows[0][5]
-        print(vision_data_dirpath)
-
-        if (not os.path.isdir(vision_data_dirpath)):
-            return None
-
-        img_file = request.UserMessage
+        img_file = request.UserMessage + ".png"
         # img = cv2.imread(vision_data_dirpath + "/" + img_file)
 
-        img = cv2.imread("/Test_Image_File/" + img_file)
+        img = cv2.imread("./Test_Image_File/" + img_file)
 
 
         #  불러온 이미지 바이트 변환

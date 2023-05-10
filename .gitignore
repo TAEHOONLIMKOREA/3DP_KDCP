@@ -8,6 +8,7 @@ __pycache__/
 
 KDCPgRPC_pb2.py
 KDCPgRPC_pb2_grpc.py
+.idea/
 
 # Distribution / packaging
 .Python
