@@ -23,45 +23,52 @@ def StartServer() -> None:
 class KDCPgRPC_NetServiceServicer(KDCPgRPC_pb2_grpc.KDIP_NetServiceServicer):
 
     def ClientSignalService(self, request, context):
-        # 현재는 채팅 메시지 전송으로 구현
-        message = request.UserMessage
-        # 현재 상태에서는 기본적으로 Echo메세지 역할을 하고
-        # 특정 단어(signal)를 수신받았을 시 동작을 수행한다.
-        # response 구조체 생성
-        resultMessage = KDCPgRPC_pb2.Message()
-        resultMessage.UserID = "Server"
-        resultMessage.UserMessage = message
-        print(message)
-        if (message == "Sucess Connection"):
-            print(message + "!!")
-        elif (message == "Start Build"):
-            print(message + "!!")
-        return resultMessage
+        try:
+            # 현재는 채팅 메시지 전송으로 구현
+            message = request.UserMessage
+            # 현재 상태에서는 기본적으로 Echo메세지 역할을 하고
+            # 특정 단어(signal)를 수신받았을 시 동작을 수행한다.
+            # response 구조체 생성
+            resultMessage = KDCPgRPC_pb2.Message()
+            resultMessage.UserID = "Server"
+            resultMessage.UserMessage = message
+            print(message)
+            if (message == "Check Connection"):
+                print("Sucess Connection!!")
+                resultMessage.UserMessage = "Sucess Connection!!"
+
+            return resultMessage
+        except Exception as e:
+            print("gRPC-ClientSignalService : " + str(e))
 
     def VisionDataService(self, request, context):
-        con = sqlite3.connect('K3DGConfiguration.db')
-        cur = con.cursor()
+        try:
+            con = sqlite3.connect('K3DGConfiguration.db')
+            cur = con.cursor()
 
-        cur.execute("SELECT * FROM ConfigTable")
-        rows = cur.fetchall()
-        vision_data_dirpath = rows[0][5]
-        print(vision_data_dirpath)
+            cur.execute("SELECT * FROM ConfigTable")
+            rows = cur.fetchall()
+            vision_data_dirpath = rows[0][5]
+            print(vision_data_dirpath)
 
-        if (not os.path.isdir(vision_data_dirpath)):
-            return None
+            if (not os.path.isdir(vision_data_dirpath)):
+                return None
 
-        img_file = request.UserMessage + ".png"
-        img = cv2.imread(vision_data_dirpath + "/" + img_file)
+            img_file = request.UserMessage + ".png"
+            img = cv2.imread(vision_data_dirpath + "/" + img_file)
 
-        #  불러온 이미지 바이트 변환
-        img_byte_cv = cv2.imencode('.PNG', img)[1].tobytes()
+            #  불러온 이미지 바이트 변환
+            img_byte_cv = cv2.imencode('.PNG', img)[1].tobytes()
 
-        # 반환 패킷 생성
-        response_packet = KDCPgRPC_pb2.ImageDataPacket(Name=img_file,
-                                                       LayerNum=0,
-                                                       Datas=img_byte_cv)
+            # 반환 패킷 생성
+            response_packet = KDCPgRPC_pb2.ImageDataPacket(Name=img_file,
+                                                           LayerNum=0,
+                                                           Datas=img_byte_cv)
+            print("Image file transfer completed")
 
+            # 패킷 전송
+            return response_packet
 
-        print("Image file transfer completed")
-        # 패킷 전송
-        return response_packet
+        except Exception as e:
+            print("gRPC-VisionDataService : " + str(e))
+
