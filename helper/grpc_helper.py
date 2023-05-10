@@ -43,7 +43,7 @@ class KDCPgRPC_NetServiceServicer(KDCPgRPC_pb2_grpc.KDIP_NetServiceServicer):
 
     def VisionDataService(self, request, context):
         try:
-            BASE_DIR = os.path.abspath('.')
+            BASE_DIR = os.path.abspath('./../')
             TARGET_DIR = os.path.join(BASE_DIR, "HMI")
             TARGET_FILE = 'K3DGConfiguration.db'
             TARGET_FILE_FULL_PATH = os.path.join(TARGET_DIR, TARGET_FILE)
